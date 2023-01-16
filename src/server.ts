@@ -20,17 +20,81 @@ app.get("/", async (req, res) => {
   res.json({ msg: "Hello! There's nothing interesting for GET /" });
 });
 
-app.get("/health-check", async (req, res) => {
+app.get("/resources", async (req, res) => {
   try {
-    //For this to be successful, must connect to db
-    await client.query("select now()");
-    res.status(200).send("system ok");
-  } catch (error) {
-    //Recover from error rather than letting system halt
-    console.error(error);
-    res.status(500).send("An error occurred. Check server logs.");
+    const query = "SELECT * FROM resources ORDER BY resource_id DESC";
+    const response = await client.query(query);
+    res.status(200).send(response.rows);
+  } catch (err) {
+    console.error(err);
   }
 });
+
+app.post("/resources", async (req, res) => {
+  const resource = req.body;
+  try {
+    const query =
+      "INSERT INTO resources (resource_url, author_name,resource_name  ,resource_description ,tags, content_type, selene_week, usage_status,recommendation_reason, user_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$,8,$9,$10)";
+    const values = [resource.resource_url, resource.author_name, resource.resource_name, resource.resource_description, resource.tags, resource.content_type, resource.selene_week, resource.usage_status,resource.recommendation_reason, resource.user_id]
+    await client.query(query, values)
+    res.status(200).send("Resource post request successful")
+  
+    } catch (err) {
+    console.error(err);
+  }
+});
+
+app.get("/users", async(req,res)=>{
+  try{
+    const query = "SELECT user_name, faculty_status FROM users"
+    const response = await client.query(query)
+    res.status(200).send(response.rows)
+  }
+  catch(err){
+    console.error(err)
+  }
+})
+
+app.patch("resources/:resourceID/likes", async (req, res)=>{
+  const {like, userId} = req.body
+  const resourceId = req.params.resourceID
+  try{
+    const query = "UPDATE likes SET is_liked = $1 WHERE resource_id = $2 AND user_id = $3"
+    const values = [like, resourceId, userId]
+    await client.query(query, values)
+    res.status(200).send("Like/Dislike sent")
+  }
+  catch(err){
+    console.error(err)
+  }
+})
+
+app.get("/resources/:resourceID/likes", async (req, res)=>{
+  const resourceId = req.params.resourceID
+  try{
+    const query = "SELECT count (*) FROM likes GROUP BY is_liked WHERE resource_id = $1 AND is_liked IS NOT NULL"
+    const values = [resourceId]
+    const response = await client.query(query, values)
+    res.status(200).send(response.rows)
+  }
+  catch(err){
+    console.error(err)
+  }
+})
+
+// get whether the signed in user liked the resource
+app.get("/resources/:resourceID/likes/:userID", async (req, res)=>{
+  const {userID, resourceID} = req.params
+  try{
+    const query = "SELECT is_liked FROM likes GROUP BY is_liked WHERE resource_id = $1 AND user_id = $2"
+    const values = [userID, resourceID]
+    const response = await client.query(query, values)
+    res.status(200).send(response.rows)
+  }
+  catch(err){
+    console.error(err)
+  }
+})
 
 connectToDBAndStartListening();
 
