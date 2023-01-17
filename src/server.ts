@@ -77,6 +77,20 @@ app.get("/resources/:resourceID/likes/:userID", async (req, res) => {
   }
 })
 
+//-------------------------------------------------------------------Get all comments on a post
+app.get("/resources/:resourceID/comments", async (req, res) => {
+  const { resourceID } = req.params
+  try {
+    const query = "SELECT * FROM comments WHERE resource_id = $1"
+    const values = [resourceID]
+    const response = await client.query(query, values)
+    res.status(200).send(response.rows)
+  }
+  catch (err) {
+    console.error(err)
+  }
+})
+
 //-------------------------------------------------------------------POST REQUESTS
 //-------------------------------------------------------------------Post resource to database
 app.post("/resources", async (req, res) => {
