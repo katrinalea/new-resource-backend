@@ -143,6 +143,21 @@ app.patch("resources/:resourceID/likes", async (req, res) => {
   }
 })
 
+//-------------------------------------------------------------------DELETE REQUESTS 
+//-------------------------------------------------------------------Delete a todo item
+app.delete("to-do-list/:listID", async (req, res) => {
+  const { to_do_item_id, userId } = req.body;
+  try {
+    const query = "DELETE from to_do_list WHERE to_do_item_id = $1 AND user_id = $2" //DELETE FROM table_name WHERE condition;
+    const values = [to_do_item_id, userId]
+    await client.query(query, values)
+    res.status(200).send("Deleted todo item")
+  }
+  catch (err) {
+    console.error(err)
+  }
+})
+
 
 connectToDBAndStartListening();
 
