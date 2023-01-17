@@ -40,70 +40,67 @@ app.get("/resources", async (req, res) => {
 //-------------------------------------------------------------------Get all users
 app.get("/users", async (req, res) => {
   try {
-    const query = "SELECT user_name, faculty_status FROM users"
-    const response = await client.query(query)
-    res.status(200).send(response.rows)
+    const query = "SELECT user_name, faculty_status FROM users";
+    const response = await client.query(query);
+    res.status(200).send(response.rows);
+  } catch (err) {
+    console.error(err);
   }
-  catch (err) {
-    console.error(err)
-  }
-})
+});
 
 //-------------------------------------------------------------------Get all likes for a specific post
 app.get("/resources/:resourceID/likes", async (req, res) => {
-  const resourceID = req.params.resourceID
+  const resourceID = req.params.resourceID;
   try {
-    const query = "SELECT count (*) FROM likes GROUP BY is_liked WHERE resource_id = $1 AND is_liked IS NOT NULL"
-    const values = [resourceID]
-    const response = await client.query(query, values)
-    res.status(200).send(response.rows)
+    const query =
+      "SELECT count (*) FROM likes GROUP BY is_liked WHERE resource_id = $1 AND is_liked IS NOT NULL";
+    const values = [resourceID];
+    const response = await client.query(query, values);
+    res.status(200).send(response.rows);
+  } catch (err) {
+    console.error(err);
   }
-  catch (err) {
-    console.error(err)
-  }
-})
+});
 
 //-------------------------------------------------------------------Get whether the signed in user liked the resource
 app.get("/resources/:resourceID/likes/:userID", async (req, res) => {
-  const { userID, resourceID } = req.params
+  const { userID, resourceID } = req.params;
   try {
-    const query = "SELECT is_liked FROM likes GROUP BY is_liked WHERE resource_id = $1 AND user_id = $2"
-    const values = [userID, resourceID]
-    const response = await client.query(query, values)
-    res.status(200).send(response.rows)
+    const query =
+      "SELECT is_liked FROM likes GROUP BY is_liked WHERE resource_id = $1 AND user_id = $2";
+    const values = [userID, resourceID];
+    const response = await client.query(query, values);
+    res.status(200).send(response.rows);
+  } catch (err) {
+    console.error(err);
   }
-  catch (err) {
-    console.error(err)
-  }
-})
+});
 
 //-------------------------------------------------------------------Get all comments on a post
 app.get("/resources/:resourceID/comments", async (req, res) => {
-  const { resourceID } = req.params
+  const { resourceID } = req.params;
   try {
-    const query = "SELECT * FROM comments WHERE resource_id = $1"
-    const values = [resourceID]
-    const response = await client.query(query, values)
-    res.status(200).send(response.rows)
+    const query = "SELECT * FROM comments WHERE resource_id = $1";
+    const values = [resourceID];
+    const response = await client.query(query, values);
+    res.status(200).send(response.rows);
+  } catch (err) {
+    console.error(err);
   }
-  catch (err) {
-    console.error(err)
-  }
-})
+});
 
 //-------------------------------------------------------------------Get todo items for a user
 app.get("/to-do-list/:userID", async (req, res) => {
-  const { userID } = req.params
+  const { userID } = req.params;
   try {
-    const query = "SELECT * FROM to_do_list WHERE user_id = $1"
-    const values = [userID]
-    const response = await client.query(query, values)
-    res.status(200).send(response.rows)
+    const query = "SELECT * FROM to_do_list WHERE user_id = $1";
+    const values = [userID];
+    const response = await client.query(query, values);
+    res.status(200).send(response.rows);
+  } catch (err) {
+    console.error(err);
   }
-  catch (err) {
-    console.error(err)
-  }
-})
+});
 
 //-------------------------------------------------------------------POST REQUESTS
 //-------------------------------------------------------------------Post resource to database
@@ -111,15 +108,23 @@ app.post("/resources", async (req, res) => {
   const resource = req.body;
   try {
     const query =
-      "INSERT INTO resources (resource_url, author_name,resource_name  ,"
-      +"resource_description ,tags, content_type, selene_week, usage_status,recommendation_reason, user_id) "
-      +"VALUES ($1,$2,$3,$4,$5,$6,$7,$,8,$9,$10)";
-    const values = [resource.resource_url, resource.author_name, resource.resource_name,
-       resource.resource_description, resource.tags, resource.content_type, resource.selene_week, 
-       resource.usage_status, resource.recommendation_reason, resource.user_id]
-    await client.query(query, values)
-    res.status(200).send("Resource post request successful")
-
+      "INSERT INTO resources (resource_url, author_name,resource_name  ," +
+      "resource_description ,tags, content_type, selene_week, usage_status,recommendation_reason, user_id) " +
+      "VALUES ($1,$2,$3,$4,$5,$6,$7,$,8,$9,$10)";
+    const values = [
+      resource.resource_url,
+      resource.author_name,
+      resource.resource_name,
+      resource.resource_description,
+      resource.tags,
+      resource.content_type,
+      resource.selene_week,
+      resource.usage_status,
+      resource.recommendation_reason,
+      resource.user_id,
+    ];
+    await client.query(query, values);
+    res.status(200).send("Resource post request successful");
   } catch (err) {
     console.error(err);
   }
@@ -143,15 +148,14 @@ app.post("/resources", async (req, res) => {
 
 //-------------------------------------------------------------------Post comment on resource
 app.post("/comments/:resourceID", async (req, res) => {
-  const {user_id, resource_id, comment } = req.body; //user.id, resource.id and comment text
-  
+  const { user_id, resource_id, comment } = req.body; //user.id, resource.id and comment text
+
   try {
     const query =
       "INSERT INTO comments (resource_id, user_id, comment) VALUES ($1,$2,$3)";
-    const values = [ resource_id, user_id, comment ]
-    await client.query(query, values)
-    res.status(200).send("Comment post request successful")
-
+    const values = [resource_id, user_id, comment];
+    await client.query(query, values);
+    res.status(200).send("Comment post request successful");
   } catch (err) {
     console.error(err);
   }
@@ -159,50 +163,48 @@ app.post("/comments/:resourceID", async (req, res) => {
 
 //-------------------------------------------------------------------Add a todo item
 app.post("/to-do-list", async (req, res) => {
-  const {user_id, resource_id } = req.body; 
+  const { user_id, resource_id } = req.body;
   try {
     const query =
       "INSERT INTO to_do_list (resource_id, user_id) VALUES ($1,$2)";
-    const values = [ resource_id, user_id ]
-    await client.query(query, values)
-    res.status(200).send("Todo list post request successful")
-
+    const values = [resource_id, user_id];
+    await client.query(query, values);
+    res.status(200).send("Todo list post request successful");
   } catch (err) {
     console.error(err);
   }
 });
 
-//-------------------------------------------------------------------PATCH REQUESTS 
+//-------------------------------------------------------------------PATCH REQUESTS
 //-------------------------------------------------------------------Edit the number of likes on a post]
 app.patch("resources/:resourceID/likes", async (req, res) => {
-  const { like, userId } = req.body
-  const resourceId = req.params.resourceID
+  const { like, userId } = req.body;
+  const resourceId = req.params.resourceID;
   try {
-    const query = "UPDATE likes SET is_liked = $1 WHERE resource_id = $2 AND user_id = $3"
-    const values = [like, resourceId, userId]
-    await client.query(query, values)
-    res.status(200).send("Like/Dislike sent")
+    const query =
+      "UPDATE likes SET is_liked = $1 WHERE resource_id = $2 AND user_id = $3";
+    const values = [like, resourceId, userId];
+    await client.query(query, values);
+    res.status(200).send("Like/Dislike sent");
+  } catch (err) {
+    console.error(err);
   }
-  catch (err) {
-    console.error(err)
-  }
-})
+});
 
-//-------------------------------------------------------------------DELETE REQUESTS 
+//-------------------------------------------------------------------DELETE REQUESTS
 //-------------------------------------------------------------------Delete a todo item
 app.delete("to-do-list/:listID", async (req, res) => {
   const { to_do_item_id, userId } = req.body;
   try {
-    const query = "DELETE from to_do_list WHERE to_do_item_id = $1 AND user_id = $2" //DELETE FROM table_name WHERE condition;
-    const values = [to_do_item_id, userId]
-    await client.query(query, values)
-    res.status(200).send("Deleted todo item")
+    const query =
+      "DELETE from to_do_list WHERE to_do_item_id = $1 AND user_id = $2"; //DELETE FROM table_name WHERE condition;
+    const values = [to_do_item_id, userId];
+    await client.query(query, values);
+    res.status(200).send("Deleted todo item");
+  } catch (err) {
+    console.error(err);
   }
-  catch (err) {
-    console.error(err)
-  }
-})
-
+});
 
 connectToDBAndStartListening();
 
