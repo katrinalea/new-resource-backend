@@ -51,10 +51,10 @@ app.get("/users", async (req, res) => {
 
 //-------------------------------------------------------------------Get all likes for a specific post
 app.get("/resources/:resourceID/likes", async (req, res) => {
-  const resourceId = req.params.resourceID
+  const resourceID = req.params.resourceID
   try {
     const query = "SELECT count (*) FROM likes GROUP BY is_liked WHERE resource_id = $1 AND is_liked IS NOT NULL"
-    const values = [resourceId]
+    const values = [resourceID]
     const response = await client.query(query, values)
     res.status(200).send(response.rows)
   }
@@ -83,6 +83,20 @@ app.get("/resources/:resourceID/comments", async (req, res) => {
   try {
     const query = "SELECT * FROM comments WHERE resource_id = $1"
     const values = [resourceID]
+    const response = await client.query(query, values)
+    res.status(200).send(response.rows)
+  }
+  catch (err) {
+    console.error(err)
+  }
+})
+
+//-------------------------------------------------------------------Get todo items for a user
+app.get("/to-do-list/:userID", async (req, res) => {
+  const { userID } = req.params
+  try {
+    const query = "SELECT * FROM comments WHERE user_id = $1"
+    const values = [userID]
     const response = await client.query(query, values)
     res.status(200).send(response.rows)
   }
