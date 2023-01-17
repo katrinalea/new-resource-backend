@@ -95,7 +95,7 @@ app.get("/resources/:resourceID/comments", async (req, res) => {
 app.get("/to-do-list/:userID", async (req, res) => {
   const { userID } = req.params
   try {
-    const query = "SELECT * FROM comments WHERE user_id = $1"
+    const query = "SELECT * FROM to_do_list WHERE user_id = $1"
     const values = [userID]
     const response = await client.query(query, values)
     res.status(200).send(response.rows)
@@ -124,6 +124,22 @@ app.post("/resources", async (req, res) => {
     console.error(err);
   }
 });
+
+/*
+    For example:
+    {
+        "resource_url": "https://cosmos.video/v/5oz4-sw4s-bzux/academy-campus",
+        "author_name": "Cosmos",
+        "resource_name": "Cosmos",
+        "resource_description": "Cosmos",
+        "tags": ["React", "Typescript", "Javascript", "Front-end", "Back-end", "CSS", "HTML", "SQL"],
+        "content_type": "interactive",
+        "selene_week": 1,
+        "usage_status": "Used this resource and loved it!",
+        "recommendation_reason": "Cosmos",
+        "user_id": 1
+    }
+*/
 
 //-------------------------------------------------------------------Post comment on resource
 app.post("/comments/:resourceID", async (req, res) => {
