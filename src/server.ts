@@ -49,7 +49,7 @@ app.get("/users", async (req, res) => {
 });
 
 //-------------------------------------------------------------------Get all likes for a specific post
-app.get("/:resourceID/likes", async (req, res) => {
+app.get("/resources/:resourceID/likes", async (req, res) => {
   const resourceID = req.params.resourceID;
   try {
     const query =
@@ -63,12 +63,12 @@ app.get("/:resourceID/likes", async (req, res) => {
 });
 
 //-------------------------------------------------------------------Get whether the signed in user liked the resource //NEEDS WORK!!!
-app.get("/:resourceID/likes/:userID", async (req, res) => {
+app.get("/resources/:resourceID/likes/:userID", async (req, res) => {
   const { userID, resourceID } = req.params;
   try {
     const query =
-      "SELECT is_liked FROM likes WHERE resource_id = $1 AND user_id = $2 GROUP BY is_liked";
-    const values = [userID, resourceID];
+      "SELECT is_liked FROM likes WHERE resource_id = $1 AND user_id = $2";
+    const values = [resourceID, userID];
     const response = await client.query(query, values);
     res.status(200).send(response.rows);
   } catch (err) {
