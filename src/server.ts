@@ -40,7 +40,7 @@ app.get("/resources", async (req, res) => {
 //-------------------------------------------------------------------Get all users
 app.get("/users", async (req, res) => {
   try {
-    const query = "SELECT user_name, faculty_status FROM users";
+    const query = "SELECT * FROM users";
     const response = await client.query(query);
     res.status(200).send(response.rows);
   } catch (err) {
@@ -106,16 +106,18 @@ app.get("/to-do-list/:userID", async (req, res) => {
 //-------------------------------------------------------------------Post resource to database
 app.post("/resources", async (req, res) => {
   const resource = req.body;
+  // const tagsArray = `ARRAY[${resource.tags}]`
   try {
     const query =
-      "INSERT INTO resources (resource_url, author_name,resource_name  ," +
-      "resource_description ,tags, content_type, selene_week, usage_status,recommendation_reason, user_id) " +
-      "VALUES ($1,$2,$3,ARRAY$4,$5,$6,$7,$,8,$9,$10)";
+      "INSERT INTO resources (resource_url, author_name, resource_name, " +
+      "resource_description, tags, content_type, selene_week, usage_status, recommendation_reason, user_id) " +
+      "VALUES ($1,$2,$3,$4, ARRAY[$5],$6,$7,$8,$9,$10)";
     const values = [
       resource.resource_url,
       resource.author_name,
       resource.resource_name,
       resource.resource_description,
+      // tagsArray,
       resource.tags,
       resource.content_type,
       resource.selene_week,
@@ -131,6 +133,17 @@ app.post("/resources", async (req, res) => {
 });
 
 /*
+
+working post post request
+
+INSERT INTO resources (resource_url, author_name, resource_name, resource_description,
+                       tags, content_type, selene_week, usage_status,recommendation_reason, user_id)
+                       VALUES ('https://cosmos.video/v/5oz4-sw4s-bzux/academy-campus', 'Cosmos', 'Cosmos',
+       'Cosmos', ARRAY['React', 'Typescript'], 'interactive', 1, 'Used this resource and loved it!', 'Cosmos', 5)
+*/
+
+
+/*
     For example:
     {
         "resource_url": "https://cosmos.video/v/5oz4-sw4s-bzux/academy-campus",
@@ -142,7 +155,7 @@ app.post("/resources", async (req, res) => {
         "selene_week": 1,
         "usage_status": "Used this resource and loved it!",
         "recommendation_reason": "Cosmos",
-        "user_id": 1
+        "user_id": 5
     }
 */
 
@@ -190,6 +203,9 @@ app.patch("resources/:resourceID/likes", async (req, res) => {
     console.error(err);
   }
 });
+
+// working
+//UPDATE likes SET is_liked = true WHERE resource_id = 3 AND user_id = 6
 
 //-------------------------------------------------------------------DELETE REQUESTS
 //-------------------------------------------------------------------Delete a todo item
