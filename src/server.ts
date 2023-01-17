@@ -49,11 +49,11 @@ app.get("/users", async (req, res) => {
 });
 
 //-------------------------------------------------------------------Get all likes for a specific post
-app.get("/resources/:resourceID/likes", async (req, res) => {
+app.get("/:resourceID/likes", async (req, res) => {
   const resourceID = req.params.resourceID;
   try {
     const query =
-      "SELECT count (*) FROM likes GROUP BY is_liked WHERE resource_id = $1 AND is_liked IS NOT NULL";
+      "SELECT count (*) FROM likes WHERE resource_id = $1 AND is_liked IS NOT NULL GROUP BY is_liked";
     const values = [resourceID];
     const response = await client.query(query, values);
     res.status(200).send(response.rows);
@@ -62,12 +62,12 @@ app.get("/resources/:resourceID/likes", async (req, res) => {
   }
 });
 
-//-------------------------------------------------------------------Get whether the signed in user liked the resource
-app.get("/resources/:resourceID/likes/:userID", async (req, res) => {
+//-------------------------------------------------------------------Get whether the signed in user liked the resource //NEEDS WORK!!!
+app.get("/:resourceID/likes/:userID", async (req, res) => {
   const { userID, resourceID } = req.params;
   try {
     const query =
-      "SELECT is_liked FROM likes GROUP BY is_liked WHERE resource_id = $1 AND user_id = $2";
+      "SELECT is_liked FROM likes WHERE resource_id = $1 AND user_id = $2 GROUP BY is_liked";
     const values = [userID, resourceID];
     const response = await client.query(query, values);
     res.status(200).send(response.rows);
@@ -142,7 +142,6 @@ INSERT INTO resources (resource_url, author_name, resource_name, resource_descri
        'Cosmos', ARRAY['React', 'Typescript'], 'interactive', 1, 'Used this resource and loved it!', 'Cosmos', 5)
 */
 
-
 /*
     For example:
     {
@@ -209,7 +208,7 @@ app.patch("resources/:resourceID/likes", async (req, res) => {
 
 //-------------------------------------------------------------------DELETE REQUESTS
 //-------------------------------------------------------------------Delete a todo item
-app.delete("to-do-list/:listID", async (req, res) => {
+app.delete("/to-do-list/:listID", async (req, res) => {
   const { to_do_item_id, userId } = req.body;
   try {
     const query =

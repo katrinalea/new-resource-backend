@@ -8,3 +8,5 @@ CREATE TABLE  to_do_list (
   	FOREIGN KEY(user_id) REFERENCES users(user_id),
   	FOREIGN KEY(resource_id) REFERENCES resources(resource_id)
 );
+
+INSERT INTO to_do_list (resource_id, user_id) VALUES (1, 1);
