@@ -110,7 +110,7 @@ app.post("/resources", async (req, res) => {
     const query =
       "INSERT INTO resources (resource_url, author_name,resource_name  ," +
       "resource_description ,tags, content_type, selene_week, usage_status,recommendation_reason, user_id) " +
-      "VALUES ($1,$2,$3,$4,$5,$6,$7,$,8,$9,$10)";
+      "VALUES ($1,$2,$3,ARRAY$4,$5,$6,$7,$,8,$9,$10)";
     const values = [
       resource.resource_url,
       resource.author_name,
