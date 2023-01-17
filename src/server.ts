@@ -127,6 +127,21 @@ app.post("/comments/:resourceID", async (req, res) => {
   }
 });
 
+//-------------------------------------------------------------------Add a todo item
+app.post("/to-do-list", async (req, res) => {
+  const {user_id, resource_id } = req.body; 
+  try {
+    const query =
+      "INSERT INTO to_do_list (resource_id, user_id) VALUES ($1,$2)";
+    const values = [ resource_id, user_id ]
+    await client.query(query, values)
+    res.status(200).send("Todo list post request successful")
+
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 //-------------------------------------------------------------------PATCH REQUESTS 
 //-------------------------------------------------------------------Edit the number of likes on a post]
 app.patch("resources/:resourceID/likes", async (req, res) => {
