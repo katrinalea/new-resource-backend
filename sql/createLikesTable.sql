@@ -9,3 +9,5 @@ CREATE TABLE  likes (
   	FOREIGN KEY(user_id) REFERENCES users(user_id),
   	FOREIGN KEY(resource_id) REFERENCES resources(resource_id)
 );
+
+INSERT INTO likes (is_liked, resource_id, user_id) VALUES (false, 1, 1)

@@ -15,3 +15,9 @@ CREATE TABLE  resources (
   	user_id				integer,
   	FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
+
+
+INSERT INTO resources (resource_url, author_name, resource_name, resource_description,
+                       tags, content_type, selene_week, usage_status,recommendation_reason, user_id)
+                       VALUES ('https://cosmos.video/v/5oz4-sw4s-bzux/academy-campus', 'Cosmos', 'Cosmos',
+       'Cosmos', ARRAY['React', 'Typescript'], 'interactive', 1, 'Used this resource and loved it!', 'Cosmos', 1)
