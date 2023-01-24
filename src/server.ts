@@ -93,7 +93,8 @@ app.get("/resources/:resourceID/comments", async (req, res) => {
 app.get("/to-do-list/:userID", async (req, res) => {
   const { userID } = req.params;
   try {
-    const query = "SELECT * FROM to_do_list WHERE user_id = $1";
+    const query =
+      "SELECT * FROM to_do_list join resources on to_do_list.resource_id = resources.resource_id and to_do_list.user_id = $1";
     const values = [userID];
     const response = await client.query(query, values);
     res.status(200).send(response.rows);
@@ -189,7 +190,7 @@ app.post("/to-do-list", async (req, res) => {
 
 //-------------------------------------------------------------------PATCH REQUESTS
 //-------------------------------------------------------------------Edit the number of likes on a post]
-app.patch("resources/:resourceID/likes", async (req, res) => {
+app.patch("/resources/:resourceID/likes", async (req, res) => {
   const { like, userId } = req.body;
   const resourceId = req.params.resourceID;
   try {
@@ -209,11 +210,10 @@ app.patch("resources/:resourceID/likes", async (req, res) => {
 //-------------------------------------------------------------------DELETE REQUESTS
 //-------------------------------------------------------------------Delete a todo item
 app.delete("/to-do-list/:listID", async (req, res) => {
-  const { to_do_item_id, userId } = req.body;
+  const { listID } = req.params;
   try {
-    const query =
-      "DELETE from to_do_list WHERE to_do_item_id = $1 AND user_id = $2"; //DELETE FROM table_name WHERE condition;
-    const values = [to_do_item_id, userId];
+    const query = "DELETE from to_do_list WHERE to_do_item_id = $1"; //DELETE FROM table_name WHERE condition;
+    const values = [listID];
     await client.query(query, values);
     res.status(200).send("Deleted todo item");
   } catch (err) {
