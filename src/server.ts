@@ -190,12 +190,13 @@ app.post("/to-do-list", async (req, res) => {
 
 //-------------------------------------------------------------------PATCH REQUESTS
 //-------------------------------------------------------------------Edit the number of likes on a post]
-app.patch("/resources/:resourceID/likes", async (req, res) => {
+
+app.post("/resources/:resourceID/likes", async (req, res) => {
   const { like, userId } = req.body;
   const resourceId = req.params.resourceID;
   try {
     const query =
-      "UPDATE likes SET is_liked = $1 WHERE resource_id = $2 AND user_id = $3";
+      "INSERT INTO likes (is_liked, resource_id, user_id) VALUES ($1, $2, $3) ON CONFLICT(user_id, resource_id) DO UPDATE SET is_liked = $1";
     const values = [like, resourceId, userId];
     await client.query(query, values);
     res.status(200).send("Like/Dislike sent");
@@ -203,7 +204,6 @@ app.patch("/resources/:resourceID/likes", async (req, res) => {
     console.error(err);
   }
 });
-
 // working
 //UPDATE likes SET is_liked = true WHERE resource_id = 3 AND user_id = 6
 
