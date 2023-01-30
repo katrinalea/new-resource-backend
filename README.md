@@ -1,5 +1,5 @@
 # Share resource backend
-App to allow developers to share resources between one another.
+Backend for the share resource app to allow developers to share resources between one another.
 
 ## Install
 
