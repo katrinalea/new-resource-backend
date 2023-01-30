@@ -9,12 +9,13 @@ import { EmbedBuilder, WebhookClient } from "discord.js";
 //-------------------------------------------------------------------Read .env file lines as though they were env vars.
 dotenv.config();
 
+const id = process.env.DISCORD_ID ?? "null";
+const token = process.env.DISCORD_TOKEN ?? "null";
+
 const webhookClient = new WebhookClient({
-  id: process.env.DISCORD_ID!,
-  token: process.env.DISCORD_TOKEN!,
+  id: id,
+  token: token,
 });
-
-
 
 export const url = "https://new-resource.netlify.app";
 
@@ -77,7 +78,7 @@ app.get("/resources/:resourceID/likes", async (req, res) => {
   }
 });
 
-//-------------------------------------------------------------------Get whether the signed in user liked the resource //NEEDS WORK!!!
+//-------------------------------------------------------------------Get whether the signed in user liked the resource
 app.get("/resources/:resourceID/likes/:userID", async (req, res) => {
   const { userID, resourceID } = req.params;
   try {
@@ -152,7 +153,6 @@ app.post("/resources", async (req, res) => {
 
     webhookClient.send({
       content: `A new resource has been added to the server: ${resource.resource_name}!`,
-      resource_url: `${resource.resource_url}`,
       avatarURL: "https://i.imgur.com/AfFp7pu.png",
       embeds: [embed],
     });
