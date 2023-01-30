@@ -26,7 +26,7 @@ const webhookClient = new WebhookClient({ id: process.env.DISCORD_ID!, token: pr
 // discordClient.login(process.env.DISCORD_TOKEN);
 
 
-export const url = "https://new-resource.netlify.app/"
+export const url = "https://new-resource.netlify.app"
 
 // export const url =
 //   process.env.NODE_ENV === "production"
