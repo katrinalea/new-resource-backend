@@ -4,9 +4,25 @@ import express from "express";
 import { Client } from "pg";
 import { getEnvVarOrFail } from "./support/envVarUtils";
 import { setupDBClientConfig } from "./support/setupDBClientConfig";
+import { EmbedBuilder, WebhookClient } from "discord.js";
 
 //-------------------------------------------------------------------Read .env file lines as though they were env vars.
 dotenv.config();
+
+const id = process.env.DISCORD_ID ?? "null";
+const token = process.env.DISCORD_TOKEN ?? "null";
+
+const webhookClient = new WebhookClient({
+  id: id,
+  token: token,
+});
+
+export const url = "https://new-resource.netlify.app";
+
+// export const url =
+//   process.env.NODE_ENV === "production"
+//     ? "https://new-resource.netlify.app/"
+//     : "http://localhost:4000";
 
 const dbClientConfig = setupDBClientConfig();
 const client = new Client(dbClientConfig);
@@ -62,7 +78,7 @@ app.get("/resources/:resourceID/likes", async (req, res) => {
   }
 });
 
-//-------------------------------------------------------------------Get whether the signed in user liked the resource //NEEDS WORK!!!
+//-------------------------------------------------------------------Get whether the signed in user liked the resource
 app.get("/resources/:resourceID/likes/:userID", async (req, res) => {
   const { userID, resourceID } = req.params;
   try {
@@ -126,38 +142,24 @@ app.post("/resources", async (req, res) => {
       resource.recommendation_reason,
       resource.user_id,
     ];
+
     await client.query(query, values);
     res.status(200).send("Resource post request successful");
+    //---------------------------------------------------------------------------------- discord server communication
+    const embed = new EmbedBuilder()
+      .setTitle(`${resource.resource_name}!`)
+      .setDescription(`${resource.resource_description}`)
+      .setColor(0x00ffff);
+
+    webhookClient.send({
+      content: `A new resource has been added to the server: ${resource.resource_name}!`,
+      avatarURL: "https://i.imgur.com/AfFp7pu.png",
+      embeds: [embed],
+    });
   } catch (err) {
     console.error(err);
   }
 });
-
-/*
-
-working post post request
-
-INSERT INTO resources (resource_url, author_name, resource_name, resource_description,
-                       tags, content_type, selene_week, usage_status,recommendation_reason, user_id)
-                       VALUES ('https://cosmos.video/v/5oz4-sw4s-bzux/academy-campus', 'Cosmos', 'Cosmos',
-       'Cosmos', ARRAY['React', 'Typescript'], 'interactive', 1, 'Used this resource and loved it!', 'Cosmos', 5)
-*/
-
-/*
-    For example:
-    {
-        "resource_url": "https://cosmos.video/v/5oz4-sw4s-bzux/academy-campus",
-        "author_name": "Cosmos",
-        "resource_name": "Cosmos",
-        "resource_description": "Cosmos",
-        "tags": ["React", "Typescript", "Javascript", "Front-end", "Back-end", "CSS", "HTML", "SQL"],
-        "content_type": "interactive",
-        "selene_week": 1,
-        "usage_status": "Used this resource and loved it!",
-        "recommendation_reason": "Cosmos",
-        "user_id": 5
-    }
-*/
 
 //-------------------------------------------------------------------Post comment on resource
 app.post("/comments/:resourceID", async (req, res) => {
@@ -188,7 +190,6 @@ app.post("/to-do-list", async (req, res) => {
   }
 });
 
-//-------------------------------------------------------------------PATCH REQUESTS
 //-------------------------------------------------------------------Edit the number of likes on a post]
 
 app.post("/resources/:resourceID/likes", async (req, res) => {
