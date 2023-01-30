@@ -176,7 +176,6 @@ app.post("/resources", async (req, res) => {
 
     const embed = new EmbedBuilder()
     .setTitle(`${resource.resource_name}!`)
-    .setURL(`${url}/resources/${resource.resource_id}`)
     .setDescription(`${resource.resource_description}`)
     .setColor(0x00FFFF);
   
