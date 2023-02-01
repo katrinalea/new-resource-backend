@@ -1,10 +1,5 @@
-# mark-fullstack-proj--starter-1
-
-## Usage:
-
-Instead of cloning this project, click "Use this template". This will allow you to create a repo on github which has this project's content but which is not a fork of it.
-
-Make sure you create the repo as being owned by your own account not by the WeAreAcademy organisation.
+# Share resource backend
+Backend for the share resource app to allow developers to share resources between one another.
 
 ## Install
 
@@ -13,22 +8,6 @@ Make sure you create the repo as being owned by your own account not by the WeAr
 ## DB Setup
 
 Copy .env.example to .env and set `DATABASE_URL`, `LOCAL_DATABASE_URL` and `PORT` to your liking.
-
-e.g.
-
-```
-DATABASE_URL=postgres://someuser:somebigsecretpassword@somedbhost/pastebin
-LOCAL_DATABASE_URL=postgres://neill@localhost/pastebin
-PORT=4000
-```
-
-You will need to create your own databases for this project - certainly one remotely and ideally one locally, too, for development and testing.
-
-Hosts for postgres with a free offering include:
-
--   https://render.com
--   https://www.elephantsql.com/
--   https://supabase.com/
 
 ## Running locally
 
